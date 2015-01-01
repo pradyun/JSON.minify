@@ -1,23 +1,28 @@
 # JSON minify
-
 Minify blocks of JSON-like content into valid JSON by removing all white-space *and* C/C++ style comments.
 
-JSON parsers (like JavaScript's `JSON.parse()` parser) generally don't consider JSON with comments to be valid and parseable. So, the intended usage is of this project is to minify development-friendly JSON (i.e with comments) to valid JSON before parsing, such as:
+## Javascript implementation
+This branch contains the JS implementation(s) of JSON minify. There are 3 implementations, one which uses regexp (`minify-sans-regexp.js`), 2 which don't (`minify.json.js` and `json.minify.js`).
 
-```js
-JSON.parse(JSON.minify(str))
+`json.minify.js` is for the node package.
+
+### Installation and Usage
+To use in node via npm:
+```sh
+npm install node-json-minify
 ```
 
-Now you can maintain development-friendly JSON documents, where your source is formatted & commented, but minify them before parsing or before transmitting them over-the-wire.
+For in-browser use, you may download from the jsDelivr CDN:
+```html
+<script src='//cdn.jsdelivr.net/json-minify/latest/minify.json.min.js'></script>
+```
+or to use Kit's fork:
+```html
+<script src='//cdn.jsdelivr.net/json-minify/latest/minify-sans-regexp.min.js'></script>
+```
 
-As transmitting bloated (ie, with comments/white-space) JSON would be wasteful and silly, this JSON minify can also be used for server-side processing environments where you can strip comments/white-space from JSON before parsing a JSON document or before transmitting such over-the-wire from server to browser.
-
-Though comments are not officially part of the JSON standard, [this][1] post from Douglas Crockford back in late 2005 helps explain the motivation behind this project.
-
-> A JSON encoder MUST NOT output comments. A JSON decoder MAY accept and ignore comments.
-
-Basically, comments are not in the JSON *generation* standard, but that doesn't mean that a parser can't be taught to ignore them. Which is exactly what JSON minify is for.
-
-The first implementation of JSON minify was in JavaScript (as `JSON.minify`), but the intent is to port the implementation to as many other environments sand languages as possible/practical.
-
-  [1]: http://tech.groups.yahoo.com/group/json/message/152
+Then use in code:
+```js
+JSON.minify = JSON.minify || require("node-json-minify");
+var myjson = JSON.minify( '{ /* comment */ "foo": 42 \n }' ); // {"foo":42}
+```
